@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text,StyleSheet,ScrollView } from 'react-native'
+import { View, Text,StyleSheet,ScrollView,ActivityIndicator } from 'react-native'
 import { SearchBar } from 'react-native-elements';
 import Cards from './Cards'
 import { getSongs } from '../actions'
@@ -7,12 +7,15 @@ import {connect} from 'react-redux'
 export class Home extends Component {
     state = {
         search: '',
+        showLoader:false
     }
 
     updateSearch = search => {
-        // console.log(search)
-        this.setState({ search });
-        this.props.getSongs(search)
+        console.log(search)
+        this.setState({ search,showLoader:true });
+        this.props.getSongs(search,() => {
+            this.setState({showLoader: false})
+        })
     };
 
     render() {
@@ -26,8 +29,8 @@ export class Home extends Component {
                     value={this.state.search}
                 />
                 
-                    
-                    {this.props.data.length ? <View style={styles.grid}><Cards/></View> : null}
+                    {this.state.showLoader && <ActivityIndicator/>}
+                    {this.props.data.length ? <View style={styles.grid}><Cards navigation = {this.props.navigation}/></View> : null}
                 
             </View>
             </ScrollView>
